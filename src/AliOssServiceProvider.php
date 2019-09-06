@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use James\AliOss\Plugins\FileUrl;
 use James\AliOss\Plugins\PutFile;
 use James\AliOss\Plugins\PutRemoteFile;
+use League\Flysystem\Config;
 use League\Flysystem\Filesystem;
 use OSS\OssClient;
 
@@ -34,10 +35,10 @@ class AliOssServiceProvider extends ServiceProvider
             $ssl = Arr::get($config, 'ssl', '');
             $isCname = Arr::get($config, 'isCName', '');
             $cdnDomain = Arr::get($config, 'cdnDomain', '');
-            $endPoint = Arr::get($config, 'endPoint', '');
+            $endPoint = Arr::get($config, 'endpoint', '');
             $endpoint_internal = Arr::get($config, 'endpoint_internal', '');
 
-            $epInternal= $isCname ? $cdnDomain: ($endpoint_internal ? $endpoint_internal : $config['endpoint']); // 内部节点
+            $epInternal= $isCname ? $cdnDomain: ($endpoint_internal ? $endpoint_internal : $endPoint); // 内部节点
 
             $client = new OssClient($config['access_id'], $config['access_key'], $epInternal, $isCname);
             $adapter = new AliOssAdapter($client, $config['bucket'], $config['prefix'], $endPoint, $ssl, $isCname, $cdnDomain);

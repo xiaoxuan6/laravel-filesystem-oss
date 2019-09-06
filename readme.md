@@ -8,7 +8,7 @@ Aliyun oss filesystem storage adapter for laravel. You can use Aliyun OSS just l
 you can simply run below command to install:
 
     "composer require james.xue/laravel-filesystem-oss"
-
+    
 ## Configuration
 Add the following in app/filesystems.php:
 ```php
@@ -23,7 +23,7 @@ Add the following in app/filesystems.php:
             //'endpoint_internal' => '<internal endpoint [OSS内网节点] 如：oss-cn-shenzhen-internal.aliyuncs.com>', // 如果为空，则默认使用 endpoint 配置
             'cdnDomain'     => '<CDN domain, cdn域名>', // 如果isCName为true, getUrl会判断cdnDomain是否设定来决定返回的url，如果cdnDomain未设置，则使用endpoint来生成url，否则使用cdn
             'ssl'           => <true|false> // true to use 'https://' and false to use 'http://'. default is false,
-            'isCName'       => <true|false> // 是否使用自定义域名,true: 则Storage.url()会使用自定义的cdn或域名生成文件url， false: 则使用外部节点生成url
+            'isCName'       => <true|false> // 是否使用自定义域名,true: 则Storage.url()会使用自定义的cdn或域名生成文件url， false: 则使用外部节点生成url (目前不支持自定义域名，可手动替换域名使用)
             'prefix'        => ''
     ],
     ...

@@ -8,10 +8,12 @@
 
 namespace James\AliOss;
 
+use Illuminate\Support\Str;
 use League\Flysystem\Adapter\AbstractAdapter;
 use League\Flysystem\Adapter\Polyfill\NotSupportingVisibilityTrait;
 use League\Flysystem\Adapter\Polyfill\StreamedTrait;
 use League\Flysystem\Config;
+use League\Flysystem\FileNotFoundException;
 use League\Flysystem\Util;
 use OSS\OssClient;
 use OSS\Core\OssException;
@@ -49,6 +51,29 @@ class AliOssAdapter extends AbstractAdapter
         'mimetype' => OssClient::OSS_CONTENT_TYPE,
         'size'     => OssClient::OSS_LENGTH,
         'filename' => OssClient::OSS_CONTENT_DISPOSTION,
+    ];
+
+    /**
+     * @var array
+     */
+    protected static $resultMap = [
+        'Body'           => 'raw_contents',
+        'Content-Length' => 'size',
+        'ContentType'    => 'mimetype',
+        'Size'           => 'size',
+        'StorageClass'   => 'storage_class',
+    ];
+
+    protected static $metaMap = [
+        'CacheControl'         => 'Cache-Control',
+        'Expires'              => 'Expires',
+        'ServerSideEncryption' => 'x-oss-server-side-encryption',
+        'Metadata'             => 'x-oss-metadata-directive',
+        'ACL'                  => 'x-oss-object-acl',
+        'ContentType'          => 'Content-Type',
+        'ContentDisposition'   => 'Content-Disposition',
+        'ContentLanguage'      => 'response-content-language',
+        'ContentEncoding'      => 'Content-Encoding',
     ];
 
     /**
@@ -471,9 +496,9 @@ class AliOssAdapter extends AbstractAdapter
         $ssl = $this->ssl ? 'https://' : 'http://';
         $domain = $this->cdnDomain == '' ? $this->endPoint : $this->cdnDomain;
         $url = $this->bucket . '.' . $this->endPoint;
-        $cname = $this->isCname ? str_replace(['https://', 'https//'], ['', ''], $domain) : $url;
+        $cname = $this->isCname ? $domain : $url;
 
-        return $ssl . $cname . '/' . ltrim($path, '/');
+        return Str::startsWith($cname, ['https://', 'http://']) ? $cname . '/' . ltrim($path, '/') : $ssl . $cname . ltrim($path, '/');
     }
 
     /**
@@ -539,5 +564,19 @@ class AliOssAdapter extends AbstractAdapter
         $result = array_merge($result, Util::map($object, static::$resultMap), ['type' => 'file']);
 
         return $result;
+    }
+
+    /**
+     * The the ACL visibility.
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    protected function getObjectACL($path)
+    {
+        $metadata = $this->getVisibility($path);
+
+        return $metadata['visibility'] === AdapterInterface::VISIBILITY_PUBLIC ? OssClient::OSS_ACL_TYPE_PUBLIC_READ : OssClient::OSS_ACL_TYPE_PRIVATE;
     }
 }
