@@ -498,7 +498,7 @@ class AliOssAdapter extends AbstractAdapter
         $url = $this->bucket . '.' . $this->endPoint;
         $cname = $this->isCname ? $domain : $url;
 
-        return Str::startsWith($cname, ['https://', 'http://']) ? $cname . '/' . ltrim($path, '/') : $ssl . $cname . ltrim($path, '/');
+        return Str::startsWith($cname, ['https://', 'http://']) ? $cname . '/' . ltrim($path, '/') : $ssl . $cname . '/' . ltrim($path, '/');
     }
 
     /**
