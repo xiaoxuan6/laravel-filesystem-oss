@@ -8,12 +8,7 @@ Aliyun oss filesystem storage adapter for laravel. You can use Aliyun OSS just l
 you can simply run below command to install:
 
     "composer require james.xue/laravel-filesystem-oss"
-    
-Then in your `config/app.php` add this line to providers array:
 
-```
-James\AliOSS\AliOssServiceProvider::class,
-```
 ## Configuration
 Add the following in app/filesystems.php:
 ```php

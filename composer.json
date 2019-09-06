@@ -21,7 +21,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "James\\AliOSS\\AliOssServiceProvider"
+                "James\\AliOss\\AliOssServiceProvider"
             ]
         }
     }
